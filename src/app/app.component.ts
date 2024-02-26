@@ -12,7 +12,7 @@ import { HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http'
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet , PostCreateComponent,HeaderComponent,FormsModule,PostListComponent,HttpClientModule],
+  imports: [CommonModule, RouterOutlet , PostCreateComponent,HeaderComponent,FormsModule,PostListComponent,HttpClientModule ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   providers:[PostsService]
@@ -24,3 +24,4 @@ export class AppComponent {
   //   this.storedPosts.push(post);
   // }
 }
+
