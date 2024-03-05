@@ -9,7 +9,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
 import { Post } from '../post.model'; 
 import { CommonModule } from "@angular/common";
 import { PostsService } from "../posts.service";
-import { ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 
 
 @Component({
@@ -27,7 +27,7 @@ export class PostCreateComponent implements OnInit{
     post:Post;
     isLoading = false;
 
-    constructor(public postsService:PostsService , public route:ActivatedRoute){}
+    constructor(public postsService:PostsService , public route:ActivatedRoute , private router:Router){}
 
     ngOnInit(): void {
         this.route.paramMap.subscribe((paramMap)=>{
@@ -48,12 +48,14 @@ export class PostCreateComponent implements OnInit{
     onSavePost(form:NgForm){
        if(form.invalid){return}
        this.isLoading =true;
-       if(this.mode === 'create'){
+       if(this.mode === 'create'){ 
         this.postsService.addPost(form.value.title,form.value.content)
        }else{
         this.postsService.updatePost(this.postId,form.value.title,form.value.content)
        }
+       this.isLoading =false;
        form.resetForm();
+       this.router.navigate(["/"]);
        //this.postCreated.emit(post);
     }
 

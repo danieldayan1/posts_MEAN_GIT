@@ -8,7 +8,7 @@ router.get("",(req,res,next)=>{
     Post.find().then((documents)=>{ res.status(200).json({message:'posts fetched succefuly !',posts:documents});});
 });
 
-router.get('/:id',(req,res,next)=>{
+router.get('/:id',(req,res,next)=>{ 
     Post.findById(req.params.id).then(post=>{
         if(post){
             res.status(200).json(post);
