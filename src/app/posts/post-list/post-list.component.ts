@@ -5,7 +5,8 @@ import { Post } from "../post.model";
 import { PostsService } from "../posts.service";
 import { Subscription } from "rxjs";
 import { MatButtonModule } from "@angular/material/button";
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatPaginatorModule, PageEvent} from '@angular/material/paginator'
 import { routes } from "../../app.routes";
 import { RouterLink, RouterModule } from "@angular/router";
 
@@ -14,7 +15,7 @@ import { RouterLink, RouterModule } from "@angular/router";
     templateUrl: './post-list.component.html',
     styleUrl:'./post-list.component.css',
     standalone: true,
-    imports: [MatExpansionModule,CommonModule,MatButtonModule,RouterModule,MatProgressSpinnerModule],
+    imports: [MatExpansionModule,CommonModule,MatButtonModule,RouterModule,MatProgressSpinnerModule,MatPaginatorModule],
 })
 
 export class PostListComponent implements OnInit , OnDestroy{
@@ -22,6 +23,10 @@ export class PostListComponent implements OnInit , OnDestroy{
     public posts:Post[]=[];
     private postsSub:Subscription ;
     isLoading = false
+    totalPosts = 0;
+    postsPerPage =2;
+    currPage=1
+    pageSizeOptions = [1,2,5,10];
 
    constructor(public postsService:PostsService){
     this.initPosts()
@@ -32,15 +37,24 @@ export class PostListComponent implements OnInit , OnDestroy{
    ngOnDestroy(): void {this.postsSub.unsubscribe();}
 
    initPosts():void{
-        this.postsService.getPosts();
+        this.postsService.getPosts(this.postsPerPage,this.currPage);
         this.postsSub =  this.postsService.getPostsUpdatedListener()
-        .subscribe((posts:Post[])=>{
+        .subscribe((postsData:{posts:Post[],postCount:number})=>{
             this.isLoading = false;
-            this.posts = posts;
+            this.posts = postsData.posts;
+            this.totalPosts = postsData.postCount;
      }); 
    }
 
    onDelete(postId:string){
-        this.postsService.deletePost(postId);
+        this.isLoading = true;
+        this.postsService.deletePost(postId).subscribe(()=>{this.postsService.getPosts(this.postsPerPage,this.currPage);});
+   }
+
+   onChangedPage(pageData:PageEvent){
+    this.isLoading = true;
+        this.currPage = pageData.pageIndex+1;
+        this.postsPerPage = pageData.pageSize;
+        this.postsService.getPosts(this.postsPerPage,this.currPage)
    }
 }
