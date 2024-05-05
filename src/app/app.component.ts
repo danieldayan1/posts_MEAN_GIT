@@ -1,5 +1,5 @@
 // import { BrowserModule } from '@angular/platform-browser';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { PostCreateComponent } from './posts/post-create/post-create.component';
@@ -7,20 +7,25 @@ import { HeaderComponent } from './header/header.component'
 import { FormsModule , NgModel} from '@angular/forms';
 import { PostListComponent } from './posts/post-list/post-list.component';
 import { PostsService } from './posts/posts.service';
-import { HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http';
+import { AuthService } from './auth/auth.service';
+import { HttpClient, HttpClientModule, HttpHandler, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { LoginComponent } from './auth/login/login.component';
+import { SignupComponent } from './auth/signup/signup.component';
+import { AuthInterceptor } from './auth/auth-interceptor';
+import { AuthGuard } from './auth/auth.guard';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet , PostCreateComponent,HeaderComponent,FormsModule,PostListComponent,HttpClientModule],
+  imports: [CommonModule, RouterOutlet , PostCreateComponent,HeaderComponent,FormsModule,PostListComponent,HttpClientModule,LoginComponent,SignupComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-  providers:[PostsService]
+  providers:[PostsService,AuthService,AuthGuard,{provide:HTTP_INTERCEPTORS,useClass: AuthInterceptor,multi:true}]
 })
-export class AppComponent {
-  // storedPosts:Post[] =[];
+export class AppComponent implements OnInit{
+constructor(private authService:AuthService){}
 
-  // onPostAdded(post:Post){
-  //   this.storedPosts.push(post);
-  // }
+  ngOnInit(): void {
+    this.authService.autoAuthUser();
+  }
 }

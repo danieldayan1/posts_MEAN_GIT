@@ -1,4 +1,5 @@
 //dandayan9 , WI5GVIiNyndkXVoK , 87.71.222.19/32    // C:\Users\danda\AppData\Local\Programs\mongosh\
+//test@test.com 123
 const path = require('path')
 const express = require('express');
 const bodyPurser = require('body-parser');
@@ -7,10 +8,11 @@ const mongoose = require('mongoose');
 const app = express();
 
 const postsRoutes = require('./routes/posts');
+const userRoutes = require('./routes/user');
 
 app.use((req,res,next)=>{
     res.setHeader('Access-Control-Allow-Origin',"*");
-    res.setHeader('Access-Control-Allow-Headers',"Origin,X-Requested-With,Content-type,Accept");
+    res.setHeader('Access-Control-Allow-Headers',"Origin,X-Requested-With,Content-type,Accept,Authorization");
     res.setHeader('Access-Control-Allow-Methods',"GET,POST,PATCH,DELETE,PUT,OPTIONS");
     next(); 
  });
@@ -24,5 +26,6 @@ app.use(bodyPurser.json());  // app.use(bodyPurser.urlencoded({extended:false}))
 app.use("/images" , express.static(path.join('backend/images')));
 
 app.use('/api/posts',postsRoutes);
+app.use('/api/user',userRoutes);
 
 module.exports = app;

@@ -9,6 +9,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatPaginatorModule, PageEvent} from '@angular/material/paginator'
 import { routes } from "../../app.routes";
 import { RouterLink, RouterModule } from "@angular/router";
+import { AuthService } from "../../auth/auth.service";
 
 @Component({
     selector: 'app-post-list',
@@ -27,14 +28,16 @@ export class PostListComponent implements OnInit , OnDestroy{
     postsPerPage =2;
     currPage=1
     pageSizeOptions = [1,2,5,10];
+    private authStatusSub:Subscription;
+    userIsAutonticated = false;
 
-   constructor(public postsService:PostsService){
+   constructor(public postsService:PostsService , private authService:AuthService ){
     this.initPosts()
    }
 
    ngOnInit(): void {;this.isLoading = true;this.initPosts();}
 
-   ngOnDestroy(): void {this.postsSub.unsubscribe();}
+   ngOnDestroy(): void {this.postsSub.unsubscribe();this.authStatusSub.unsubscribe();}
 
    initPosts():void{
         this.postsService.getPosts(this.postsPerPage,this.currPage);
@@ -44,6 +47,11 @@ export class PostListComponent implements OnInit , OnDestroy{
             this.posts = postsData.posts;
             this.totalPosts = postsData.postCount;
      }); 
+     this.userIsAutonticated = this.authService.getIsAuth();
+        this.authStatusSub = this.authService.getAuthStatusListener()
+        .subscribe(isAutonticated =>{
+            this.userIsAutonticated = isAutonticated;
+        });
    }
 
    onDelete(postId:string){

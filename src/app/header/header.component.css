@@ -2,6 +2,11 @@ ul{
     list-style: none;
     padding: 0px;
     margin: 0px;
+    display:flex;
+}
+
+li{
+    margin: 1rem;
 }
 
 a {
@@ -11,4 +16,8 @@ a {
 
 .spacer{
     flex:  1 1  auto ;
+}
+
+span:hover{
+    cursor: pointer;
 }
