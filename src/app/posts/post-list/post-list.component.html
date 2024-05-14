@@ -10,7 +10,7 @@
         <p>
             {{post.content}}
         </p>
-        <mat-action-row *ngIf="userIsAutonticated">
+        <mat-action-row *ngIf="userIsAutonticated && userId == post.creator">
             <a mat-raised-button color="primary" [routerLink]="['/edit/',post.id]"  >EDIT</a>
             <button mat-raised-button color="warn" (click)="onDelete(post.id)">DELETE</button>
         </mat-action-row>

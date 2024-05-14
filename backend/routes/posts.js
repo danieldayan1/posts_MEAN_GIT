@@ -52,22 +52,25 @@ router.get('/:id',(req,res,next)=>{
 })
 
 router.post("",chachAuth,multer({storage:storage}).single("image"),(req,res,next)=>{
-    // const post = req.body;
     const url = req.protocol + '://' + req.get("host");
     const post = new Post({
         title:req.body.title,
         content:req.body.content,
-        imagePath: url + '/images/' + req.file.filename
+        imagePath: url + '/images/' + req.file.filename,
+        creator: req.userData.userId
     });
     post.save()
     .then(createdPost=>{res.status(201).json({message:'post added succefuly !',post:{...createdPost,id:createdPost._id,}})});
 })
 
 router.delete('/:id',chachAuth,(req,res,next)=>{
-    Post.deleteOne({_id: req.params.id})
+    Post.deleteOne({_id: req.params.id , creator:req.userData.userId})
     .then(result=>{
-        console.log(result)
-        res.status(200).json({message:'post delited !'});
+        if(result.deletedCount>0){
+            res.status(200).json({message:'post delited !'});
+        }else{
+            res.status(401).json({message:'Not authorized !'});
+        }
     })
 })
 
@@ -83,12 +86,17 @@ router.put('/:id',chachAuth,multer({storage:storage}).single("image"),(req,res,n
         _id: req.body.id,
         title:req.body.title,
         content:req.body.content,
-        imagePath:imagePath   
+        imagePath:imagePath  ,
+        creator:req.userData.userId 
     })
-    Post.updateOne({_id: req.params.id},post)
+    Post.updateOne({_id: req.params.id , creator:req.userData.userId},post)
     .then(result=>{
-        console.log(result)
-        res.status(200).json({message:'post edited !'});
+        if(result.modifiedCount>0){
+            res.status(200).json({message:'post edited !'});
+        }else{
+            res.status(401).json({message:'Not authorized !'});
+        }
+        
     })
 })
 
