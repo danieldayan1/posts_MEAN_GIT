@@ -39,16 +39,18 @@ router.get("",(req,res,next)=>{
     }
     postQuery.find().then((documents)=>{fetchPosts = documents;return Post.countDocuments()})
         .then((count)=>{res.status(200).json({message:'posts fetched succefuly !',posts:fetchPosts,maxPosts:count});})
+        .catch(error=>res.status(500).json({message:'Fetching post failed !'}))
 });
 
 router.get('/:id',(req,res,next)=>{ 
-    Post.findById(req.params.id).then(post=>{
+    Post.findById(req.params.id)
+    .then(post=>{
         if(post){
             res.status(200).json(post);
         }else{
             res.status(404).json({message:'posts not found !'});
         }
-    })
+    }).catch(error=>res.status(500).json({message:'Fetching post failed !'}))
 })
 
 router.post("",chachAuth,multer({storage:storage}).single("image"),(req,res,next)=>{
@@ -60,7 +62,8 @@ router.post("",chachAuth,multer({storage:storage}).single("image"),(req,res,next
         creator: req.userData.userId
     });
     post.save()
-    .then(createdPost=>{res.status(201).json({message:'post added succefuly !',post:{...createdPost,id:createdPost._id,}})});
+    .then(createdPost=>{res.status(201).json({message:'post added succefuly !',post:{...createdPost,id:createdPost._id,}})})
+    .catch(error=>{res.status(500).json({message:'Creating a post failed !'})});
 })
 
 router.delete('/:id',chachAuth,(req,res,next)=>{
@@ -71,7 +74,7 @@ router.delete('/:id',chachAuth,(req,res,next)=>{
         }else{
             res.status(401).json({message:'Not authorized !'});
         }
-    })
+    }).catch(error=>res.status(500).json({message:'Delite post failed !'}))
 })
 
 router.put('/:id',chachAuth,multer({storage:storage}).single("image"),(req,res,next)=>{
@@ -97,7 +100,7 @@ router.put('/:id',chachAuth,multer({storage:storage}).single("image"),(req,res,n
             res.status(401).json({message:'Not authorized !'});
         }
         
-    })
+    }).catch(error=>res.status(500).json({message:"Couldn't update the post !"}))
 })
 
 module.exports = router
