@@ -17,11 +17,13 @@ import { ErrorInterceptor } from './error-interceptor';
 import {MatDialogModule,MatDialog} from '@angular/material/dialog';
 import { ErrorComponent } from './error/error.component';
 
+
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet , PostCreateComponent,HeaderComponent,FormsModule,
-    PostListComponent,HttpClientModule,LoginComponent,SignupComponent,MatDialogModule,ErrorComponent],
+  imports: [PostCreateComponent,PostListComponent,CommonModule, RouterOutlet ,HeaderComponent,FormsModule,
+    HttpClientModule,LoginComponent,SignupComponent,MatDialogModule,ErrorComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   providers:[PostsService,AuthService,AuthGuard,
@@ -31,6 +33,7 @@ import { ErrorComponent } from './error/error.component';
   
 })
 export class AppComponent implements OnInit{
+  title: any;
 constructor(private authService:AuthService){}
 
   ngOnInit(): void {
